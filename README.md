@@ -15,11 +15,11 @@ Script for building libgit2 on Windows + redistributed binaries.
 
 ## Usage
 
-- Install [VS Build Tools](https://aka.ms/vs/17/release/vs_BuildTools.exe) (or [here](https://visualstudio.microsoft.com/downloads/)) and [Nushell](https://www.nushell.sh/):
+- Install [VS Build Tools](https://aka.ms/vs/17/release/vs_BuildTools.exe) (or [here](https://visualstudio.microsoft.com/downloads/)), [Nushell](https://www.nushell.sh/) and 7zip:
 
   ```pwsh
   winget install Microsoft.VisualStudio.2022.Community --silent --override "--wait --quiet --add ProductLang En-us --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended"
-  winget install nushell
+  winget install nushell 7z
   ```
 
   _credit to robotdad for [this command](https://gist.github.com/robotdad/83041ccfe1bea895ffa0739192771732)_

@@ -1,32 +1,38 @@
 use common.nu libgit_clone
 
-const targets = ["git2.dll", "git2.exp", "git2.lib", "git2.pdb"]
+const build_targets = ["git2.dll", "git2.exp", "git2.lib"]
 
-const outputdir = ("build/win-x64/out" | path expand)
+const targetdir = ("build" | path join win-x64 | path expand)
+const outputdir = ($targetdir | path join out)
+const libgitdir = ($targetdir | path join libgit2)
 
 print "Win (system arch)"
-mkdir build build/win-x64 build/win-x64/out
+mkdir $outputdir
 
-libgit_clone build/win-x64/libgit2
-
-cd build/win-x64/libgit2
-
-mkdir build
-cd build
+libgit_clone $libgitdir
+mkdir ($libgitdir | path join build)
+cd ($libgitdir | path join build)
 
 print "=== CMAKE CONFIG STEP ==="
-cmake ..
+cmake .. -DCMAKE_BUILD_TYPE=Release
  
 print "=== CMAKE BUILD STEP ==="
-cmake --build .
+cmake --build . --config Release
 
-print "=== CMAKE TEST STEP ==="
-cd Debug
+print "=== POST-BUILD ==="
+cd ($libgitdir | path join build Release)
 ./libgit2_tests
 
-$targets | each { |it| 
+$build_targets | each { |it|
   print $"Copying ($it) to ($outputdir)"
-  cp $it $outputdir 
+  cp ($libgitdir | path join build Release $it) $outputdir
 }
+
+print "=== COPY OVER .h FILES ==="
+cp -r ($libgitdir | path join include) ($outputdir | path join include)
+
+print "=== ZIP ==="
+cd $targetdir
+7z a win-x64.zip './out/*'
 
 print OK!
